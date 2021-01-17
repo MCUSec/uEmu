@@ -25,3 +25,6 @@
 [submodule "S2E-uEmu/build-scripts"]
 	path = S2E-uEmu/build-scripts
 	url = https://github.com/weizhou-chaojixx/build-scripts.git
+[submodule "Fuzzer/AFL"]
+	path = Fuzzer/AFL
+	url = https://github.com/weizhou-chaojixx/AFL.git
