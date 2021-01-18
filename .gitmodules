@@ -28,3 +28,6 @@
 [submodule "Fuzzer/AFL"]
 	path = Fuzzer/AFL
 	url = https://github.com/weizhou-chaojixx/AFL.git
+[submodule "unit_tests"]
+	path = unit_tests
+	url = https://github.com/weizhou-chaojixx/uEmu-unit_tests.git
