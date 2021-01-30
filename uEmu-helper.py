@@ -29,32 +29,30 @@ def read_config(cfg_f, mode, cachefilename, firmwarename, debug):
         'cache_file_name': cachefilename if mode else "",
     }
 
+    # MEM
     config['rom'] = parser.get("MEM_Config","rom").split( )
     config['ram'] = parser.get("MEM_Config","ram").split( )
-    config['entry'] = int(parser.get("MEM_Config","entry"), 16)
-    config['msp'] = int(parser.get("MEM_Config","msp"), 16)
     config['vtor'] = int(parser.get("MEM_Config","vtor"), 16)
 
-    # Configure the interval tb number of trigger for external irqs of target firmware
+    # IRQ
     config['irq_tb_break'] = parser.getint("IRQ_Config","irq_tb_break")
     config['disable_irqs'] = parser.get("IRQ_Config","disable_irqs").split()
     config['disable_systick'] = parser.get("IRQ_Config","disable_systick")
     if config['disable_systick'] == "true":
         config['systick_begin_point'] = parser.get("IRQ_Config","systick_begin_point")
-    config['enable_extended_irq'] = parser.get("IRQ_Config","enable_extended_irq")
 
-    # Configure the cache loop number used for dead loop judgement and max known tb number used for live loop judgement
+    # Invlid states detection
     config['bb_inv1'] = parser.getint("INV_Config","bb_inv1")
     config['bb_inv2'] = parser.getint("INV_Config","bb_inv2")
     config['bb_terminate'] = parser.getint("INV_Config","bb_terminate")
-
-    # Advanced Configure
     config['kill_points'] = parser.get("INV_Config","kill_points").split()
     config['alive_points'] = parser.get("INV_Config","alive_points").split()
-    config['limit_symbolic_count_t3'] = parser.getint("TC_Config","limit_symbolic_count_t3")
-    config['max_t2_size'] = parser.getint("TC_Config","max_t2_size")
-    config['function_parameter_num'] = parser.getint("TC_Config","function_parameter_num")
-    config['caller_level'] = parser.getint("TC_Config","caller_level")
+
+    # TC
+    config['t2_function_parameter_num'] = parser.getint("TC_Config","t2_function_parameter_num")
+    config['t2_caller_level'] = parser.getint("TC_Config","t2_caller_level")
+    config['t2_max_context'] = parser.getint("TC_Config","t2_max_context")
+    config['t3_max_symbolic_count'] = parser.getint("TC_Config","t3_max_symbolic_count")
 
     # Fuzzing target
     if config['mode'] == "true":
@@ -63,7 +61,7 @@ def read_config(cfg_f, mode, cachefilename, firmwarename, debug):
     else:
         config['enable_fuzz'] = "false"
     if config['enable_fuzz'] == "true":
-        config['writeable_ranges'] = parser.get("Fuzzer_Config","writeable_ranges").split( )
+        config['additional_writable_ranges'] = parser.get("Fuzzer_Config","additional_writable_ranges").split( )
         config['input_peripherals'] = parser.get("Fuzzer_Config","input_peripherals").split( )
         config['time_out'] = parser.getint("Fuzzer_Config","time_out")
         config['crash_points'] = parser.get("Fuzzer_Config","crash_points").split()
