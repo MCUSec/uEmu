@@ -45,7 +45,7 @@ During symbolic execution, it infers the rules to respond to unknown peripheral 
 
 You must install a few packages in order to build μEmu manually.
 The required packages of μEmu is same as the current S2E 2.0,
-please check out [required packages](http://s2e.systems/docs/BuildingS2E.html#required-packages) of S2E.
+please check out [required packages](https://github.com/S2E/s2e/blob/master/Dockerfile#L35) of S2E.
 Note please do not install S2E itself, but only install S2E dependent packages.
 
 
