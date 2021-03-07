@@ -37,18 +37,17 @@ During symbolic execution, it infers the rules to respond to unknown peripheral 
 
 ## Source Code Installation
 **NOTE**:
-1. If you are using Ubuntu 14.04 you must install CMake manually - S2E requires version 3.4.3 or newer, which is
-not available in the Ubuntu 14.04 repositories.
+1. uEmu builds and runs on Ubuntu 18.04 or 20.04 LTS (64-bit). Earlier versions may still work, but we do not support them anymore.
 
-2. The μEmu is still compatianle with the original S2E, so you can also analyze i386 and X64 program
-
-3. Since the qemu in arm kvm mode will use ptrace.h which is from the host arm linux kernel, however the real host μEmu is X86, so you have to add ptracearm.h from [linux source code](https://elixir.bootlin.com/linux/latest/source/arch/arm/include/asm/ptrace.h) (you can also directly download it from this repo) to the your local path: /usr/include/x86_64-linux-gnu/asm 
+2. Since the qemu in arm kvm mode will use ptrace.h which is from the host arm linux kernel, however the real host μEmu is X86, so you have to add ptracearm.h from [linux source code](https://elixir.bootlin.com/linux/latest/source/arch/arm/include/asm/ptrace.h) (you can also directly download it from this repo) to the your local path: /usr/include/x86_64-linux-gnu/asm 
 
 ### Required packages
 
 You must install a few packages in order to build μEmu manually.
 The required packages of μEmu is same as the current S2E 2.0,
-please check out [required packages](http://s2e.systems/docs/BuildingS2E.html#required-packages) of S2E.
+please check out [required packages](https://github.com/S2E/s2e/blob/master/Dockerfile#L35) of S2E.
+Note please do not install S2E itself, but only install S2E dependent packages.
+
 
 ### Checking out source code
 
@@ -56,9 +55,9 @@ The μEmu source code can be obtained from the my git repository using the follo
 
 ```console
  # uEmuDIR must be in your home folder (e.g., /home/user/uEmu)
- sudo apt-get install repo
+ sudo apt-get install git-repo
  cd $uEmuDIR
- sudo repo init -u git://github.com/weizhou-chaojixx/manifest.git -b uEmu
+ sudo repo init -u https://github.com/MCUSec/manifest.git -b uEmu
  sudo repo sync
 ```
 This will set up the μEmu repositories in ``$uEmuDIR``.
@@ -124,7 +123,7 @@ Usage: python3 <repo_path>/uEmu-helper.py <firmware_name> <config_file_name>  [-
   * -s SEEDFILENAME,      Configure the seed filename to bootstrap fuzzing, if absent, μEmu will use random number for fuzzing.
 
 ### Preparing the user configuration file
-You can use the configuration files provided in our [unit-tests](https://github.com/weizhou-chaojixx/uEmu-unit_tests) and [real-world-firwmare](https://github.com/weizhou-chaojixx/uEmu-read_world_firmware) repos to our unit test samples or real-world samples in the μEmu paper.
+You can use the configuration files provided in our [unit-tests](https://github.com/MCUSec/uEmu-unit_tests) and [real-world-firwmare](https://github.com/MCUSec/uEmu-read_world_firmware) repos to our unit test samples or real-world samples in the μEmu paper.
 If you want to test your own firmware, please refer to this [instruction](docs/config.md) and our paper to edit the user configuration file. 
 
 Note that incorrect configurations will lead to unexpected  behaviors of μEmu like stall or finishing with inaccurate KB.
