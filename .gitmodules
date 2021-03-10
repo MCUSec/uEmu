@@ -1,6 +1,0 @@
-[submodule "unit_tests"]
-	path = unit_tests
-	url = git@github.com:MCUSec/uEmu-unit_tests.git
-[submodule "uEmu-real_world_firmware"]
-	path = fuzzing_tests
-	url = git@github.com:MCUSec/uEmu-real_world_firmware.git
