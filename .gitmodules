@@ -1,36 +1,6 @@
-[submodule "S2E-uEmu/libs2ecore"]
-	path = S2E-uEmu/libs2ecore
-	url = https://github.com/weizhou-chaojixx/libs2ecore.git
-[submodule "S2E-uEmu/libs2eplugins"]
-	path = S2E-uEmu/libs2eplugins
-	url = https://github.com/weizhou-chaojixx/libs2eplugins.git
-[submodule "S2E-uEmu/libs2e"]
-	path = S2E-uEmu/libs2e
-	url = https://github.com/weizhou-chaojixx/libs2e.git
-[submodule "S2E-uEmu/libcpu"]
-	path = S2E-uEmu/libcpu
-	url = https://github.com/weizhou-chaojixx/libcpu.git
-[submodule "S2E-uEmu/libtcg"]
-	path = S2E-uEmu/libtcg
-	url = https://github.com/weizhou-chaojixx/libtcg.git
-[submodule "S2E-uEmu/libvmi"]
-	path = S2E-uEmu/libvmi
-	url = https://github.com/weizhou-chaojixx/libvmi.git
-[submodule "S2E-uEmu/klee"]
-	path = S2E-uEmu/klee
-	url = https://github.com/weizhou-chaojixx/klee.git
-[submodule "S2E-uEmu/qemu"]
-	path = S2E-uEmu/qemu
-	url = https://github.com/weizhou-chaojixx/qemu-1.git
-[submodule "S2E-uEmu/build-scripts"]
-	path = S2E-uEmu/build-scripts
-	url = https://github.com/weizhou-chaojixx/build-scripts.git
-[submodule "Fuzzer/AFL"]
-	path = Fuzzer/AFL
-	url = https://github.com/weizhou-chaojixx/AFL.git
 [submodule "unit_tests"]
 	path = unit_tests
-	url = https://github.com/MCUSec/uEmu-unit_tests.git
+	url = git@github.com:MCUSec/uEmu-unit_tests.git
 [submodule "uEmu-real_world_firmware"]
 	path = fuzzing_tests
 	url = git@github.com:MCUSec/uEmu-real_world_firmware.git
