@@ -40,7 +40,6 @@ def read_config(cfg_f, mode, cachefilename, firmwarename, debug):
     config['disable_systick'] = parser.get("IRQ_Config","disable_systick")
     if config['disable_systick'] == "true":
         config['systick_begin_point'] = parser.get("IRQ_Config","systick_begin_point")
-    config['enable_extended_irq'] = parser.get("IRQ_Config","enable_extended_irq")
 
     # Invlid states detection
     config['bb_inv1'] = parser.getint("INV_Config","bb_inv1")
@@ -50,9 +49,9 @@ def read_config(cfg_f, mode, cachefilename, firmwarename, debug):
     config['alive_points'] = parser.get("INV_Config","alive_points").split()
 
     # TC
-    config['t2_max_context'] = parser.getint("TC_Config","t2_max_context")
     config['t2_function_parameter_num'] = parser.getint("TC_Config","t2_function_parameter_num")
     config['t2_caller_level'] = parser.getint("TC_Config","t2_caller_level")
+    config['t2_max_context'] = parser.getint("TC_Config","t2_max_context")
     config['t3_max_symbolic_count'] = parser.getint("TC_Config","t3_max_symbolic_count")
 
     # Fuzzing target
