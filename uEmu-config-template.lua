@@ -35,8 +35,6 @@ mem = {
 }
 
 init = {
-   entry = {{ entry }}, -- equal to pc of Reset_Handler+1
-   msp_init = {{ msp }},
    vtor = {{ vtor }},
 }
 
@@ -117,45 +115,25 @@ add_plugin("StateSwitchTracer")
 
 add_plugin("ARMFunctionMonitor")
 pluginsConfig.ARMFunctionMonitor = {
-	functionParameterNum = {{ function_parameter_num }},
-	callerLevel = {{ caller_level }},
+	functionParameterNum = {{ t2_function_parameter_num }},
+	callerLevel = {{ t2_caller_level }},
 }
+
 
 add_plugin("PeripheralModelLearning")
 pluginsConfig.PeripheralModelLearning = {
 	useKnowledgeBase = {{ mode }},
 	useFuzzer = {{ enable_fuzz }},
-	limitSymNum = {{ limit_symbolic_count_t3 }},
-	maxT2Size = {{ max_t2_size }},
+	limitSymNum = {{ t3_max_symbolic_count }},
+	maxT2Size = {{ t2_max_context }},
 	{% if enable_fuzz == "true" %}allowNewPhs = {{ allow_new_phs }},
 	{% else %}allowNewPhs = true,{% endif %}
 	{% if mode == "true" %}autoModeSwitch = {{ allow_auto_mode_switch }},
 	{% else %}autoModeSwitch = false,{% endif %}
-	enableExtendedInterruptMode = {{ enable_extended_irq }},
+	enableExtendedInterruptMode = "true",
 	cacheFileName = "{{ cache_file_name }}",
 	firmwareName = "{{ firmware_name }}",
 }
-
-{% if mode == "true" %}
-add_plugin("AFLFuzzer")
-pluginsConfig.AFLFuzzer = {
-	useAFLFuzzer = {{ enable_fuzz }},
-    {% if enable_fuzz == "true" %}	
-	inputPeripherals = {
-		{% for input_peripheral in input_peripherals %} {{ '{' }}{{ input_peripheral }}{{ '}' }}, {% endfor %}
-	},
-	writeRanges = {
-		{% for writeable_range in writeable_ranges %} {{ '{' }}{{ writeable_range }}{{ '}' }}, {% endfor %}
-	},
-	crashPoints = {
-        {% for k in crash_points %}
-        {{ k }},{% endfor %}
-	},
-	hangTimeout = {{ time_out }},
-	forkCount = {{ fork_count }},
-	{% endif %}
-}
-{% endif %}
 
 add_plugin("InvalidStatesDetection")
 pluginsConfig.InvalidStatesDetection = {
@@ -186,3 +164,24 @@ pluginsConfig.ExternalInterrupt ={
 	{% if disable_systick == "true" %}systickBeginPoint = {{ systick_begin_point }},{% endif %}
 }
 
+
+{% if mode == "true" %}
+add_plugin("AFLFuzzer")
+pluginsConfig.AFLFuzzer = {
+	useAFLFuzzer = {{ enable_fuzz }},
+    {% if enable_fuzz == "true" %}	
+	inputPeripherals = {
+		{% for input_peripheral in input_peripherals %} {{ '{' }}{{ input_peripheral }}{{ '}' }}, {% endfor %}
+	},
+	writeRanges = {
+		{% for additional_writable_range in additional_writable_ranges %} {{ '{' }}{{ additional_writable_range }}{{ '}' }}, {% endfor %}
+	},
+	crashPoints = {
+        {% for k in crash_points %}
+        {{ k }},{% endfor %}
+	},
+	hangTimeout = {{ time_out }},
+	forkCount = {{ fork_count }},
+	{% endif %}
+}
+{% endif %}
