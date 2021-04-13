@@ -61,11 +61,11 @@ please do not install S2E itself, but only install **build**, **S2E** and **C++1
 The μEmu source code can be obtained from the my git repository using the following commands.
 
 ```console
- # uEmuDIR must be in your home folder (e.g., /home/user/uEmu)
- sudo apt-get install git-repo
+ export uEmuDIR=/home/user/uEmu  # uEmuDIR must be in your home folder (e.g., /home/user/uEmu)
+ sudo apt-get install git-repo   # or follow instructions at https://gerrit.googlesource.com/git-repo/
  cd $uEmuDIR
- sudo repo init -u https://github.com/MCUSec/manifest.git -b uEmu
- sudo repo sync
+ repo init -u https://github.com/MCUSec/manifest.git -b uEmu
+ repo sync
 ```
 This will set up the μEmu repositories in ``$uEmuDIR``.
 
@@ -77,7 +77,7 @@ The μEmu Makefile can be run as follows:
 ```console
     $ sudo mkdir $uEmuDIR/build
     $ cd $uEmuDIR/build
-    $ sudo make -f $uEmuDIR/Makefile install
+    $ make -f $uEmuDIR/Makefile && sudo make install
     # Go make some coffee or do whatever you want, this will take some time (approx. 60 mins on a 4-core machine)
 ```
 
@@ -92,7 +92,7 @@ To compile μEmu in debug mode, use ``make install-debug``.
 
 ```console
 cd $uEmuDIR/AFL
-sudo make
+make
 sudo make install
 ```
 
@@ -148,12 +148,13 @@ After the above command successfully finishes,  you could find the `launch-uEmu.
 After finishing (typically a few minutes), you can find log files and knowledge base (KB) file (e.g., `WYCINWYC.elf-round1-state53-tbnum1069_KB.dat`) in `s2e-last` (referring to the `s2e-out-<max>`) folder. Detail logs will be printed to `s2e-last/debug.txt` and important log information will be printed to`s2e-last/warnings.txt` . More detail about log files please refer to [S2E documents](http://s2e.systems/docs/index.html) .
 
 **NOTE**:
-1. If you find μEmu cannot be finished KB extraction with a quiet long time (e.g., more than ten minutes), typically the reason is μEmu has been stuck. You should manually abort the execution, then check the configuration file and log files to find the failure reasons, then re-configure and re-run the firmware with μEmu. Thus, we recommend user to enable debug level log information (add `--debug` in above command)  when he first time runs the firmware.
+
+1. If you find μEmu cannot be finished KB extraction with a quiet long time (e.g., more than ten minutes), typically the reason is μEmu has been stuck. You should manually abort the execution, then check the configuration file, firmware and log files to find the reason and re-configure and re-run the firmware with μEmu. Thus,  we recommend user to enable debug level log information (add `--debug` in above command)  when he first time runs the firmware.
 
 
 #### Dynamic Analysis and Fuzzing Phase:
 
-Next, you can run the firmware with learned KB for dynamic analysis.  About more detail about KB entries format please refer to [kb.md](docs/kb.md).
+Next, you can run the firmware with learned KB for dynamic analysis.  About more detail about KB entries format please refer to [kb.md](docs/KB.md).
 
 The below command is to configure μEmu for running `WYCINWYC.elf` firmware in dynamic phase with `WYCINWYC.elf-round1-state53-tbnum1069_KB` KB file and fuzzing seed file `small_document.xml`.
 
@@ -161,8 +162,7 @@ The below command is to configure μEmu for running `WYCINWYC.elf` firmware in d
 ```console
 python3 uEmu-helper.py WYCINWYC.elf WYCNINWYC.cfg -kb WYCINWYC.elf-round1-state53-tbnum1069_KB.dat -s small_document.xml
 ```
-
-Since μEmu relies on AFL for fuzzing input. Thus, you **first** need to launch AFL fuzzur via `./launch-AFL.sh` in **one** terminal to input test-cases and then launch μEmu via `./launch-uEmu.sh` in **another** terminal to consume the test-cases.
+Since μEmu relies on AFL for fuzzing input. Thus, you first need to launch AFL fuzzur via `./launch-AFL.sh` in one terminal to input test-cases and then launch μEmu via `./launch-uEmu.sh` in another terminal to consume the test-cases.
 The fuzzing results is stored in <proj_dir>/<firmware> folder. The log and KB files of addition round KB extraction phase are record in <s2e-last> folder.
 
 **NOTE**:
