@@ -23,18 +23,10 @@ elif [ $1 ]; then
   exit 8
 fi
 
-
 export S2E_CONFIG=uEmu-config.lua
 export S2E_SHARED_DIR=$INSTALL_DIR
 export S2E_MAX_PROCESSES=1
 export S2E_UNBUFFERED_STREAM=1
-
-#-z   是检查字符串是否为空 
-#检查文件为空用   -s来判断
-#-a   file   True   if   file   exists. 
-#-d   file   True   if   file   exists   and   is   a   directory.
-#-f   file   True   if   file   exists   and   is   a   regular   file.
-#-n   string True   if   the   length   of   string   is   non-zero.
 
 if [ $S2E_MAX_PROCESSES -gt 1 ]; then
     # Multi-threaded mode does not support graphics output, so we override
@@ -44,12 +36,12 @@ fi
 
 if [ "x$DEBUG" != "x" ]; then
 
-    if [ ! -d "$BUILD_DIR/qemu-{{ qemu_arch }}-$BUILD" ]; then
-        echo "No debug build found in $BUILD_DIR/qemu-{{ qemu_arch }}-$BUILD. Please run \`\`s2e build -g\`\`"
+    if [ ! -d "$BUILD_DIR/qemu-$BUILD" ]; then
+        echo "No debug build found in $BUILD_DIR/qemu-$BUILD. Please run \`\`uEmu build -g\`\`"
         exit 1
     fi
 
-    QEMU="$BUILD_DIR/qemu-{{ qemu_arch }}-$BUILD/bin/qemu-system-{{ qemu_arch }}"
+    QEMU="$BUILD_DIR/qemu-$BUILD/{{ qemu_arch }}-softmmu/qemu-system-{{ qemu_arch }}"
 	QEMU_MEMORY="{{ memory }}"
     LIBS2E="$BUILD_DIR/libs2e-$BUILD/{{ qemu_arch }}-s2e-softmmu/libs2e.so"
 
