@@ -10,7 +10,14 @@ During symbolic execution, it infers the rules to respond to unknown peripheral 
 ## Citing our paper
 
 ```bibtex
-
+@inproceedings {uEmu,
+author = {Wei Zhou and Le Guan and Peng Liu and Yuqing Zhang},
+title = {Automatic Firmware Emulation through Invalidity-guided Knowledge Inference},
+booktitle = {30th {USENIX} Security Symposium ({USENIX} Security 21)},
+year = {2021},
+url = {https://www.usenix.org/conference/usenixsecurity21/presentation/zhou},
+publisher = {{USENIX} Association},
+}
 ```
 
 
@@ -18,9 +25,6 @@ During symbolic execution, it infers the rules to respond to unknown peripheral 
 
 ```
 .
-├── Fuzzer
-│    └── AFL                 # AFLv256b source code with μEmu modification
-├── S2E-uEmu                 # S2E source code with μEmu modification
 ├── LICENSE
 ├── README.md
 ├── docs                     # more documentation about implementation and configuration
@@ -36,17 +40,20 @@ During symbolic execution, it infers the rules to respond to unknown peripheral 
 
 
 ## Source Code Installation
-**NOTE**:
+
+**Note**:
 1. uEmu builds and runs on Ubuntu 18.04 or 20.04 LTS (64-bit). Earlier versions may still work, but we do not support them anymore.
 
-2. Since the qemu in arm kvm mode will use ptrace.h which is from the host arm linux kernel, however the real host μEmu is X86, so you have to add ptracearm.h from [linux source code](https://elixir.bootlin.com/linux/latest/source/arch/arm/include/asm/ptrace.h) (you can also directly download it from this repo) to the your local path: /usr/include/x86_64-linux-gnu/asm 
+2. Since the qemu in arm kvm mode will use ptrace.h which is from the host arm linux kernel, however the real host μEmu is X86, so you have to add ptracearm.h from [linux source code](https://elixir.bootlin.com/linux/latest/source/arch/arm/include/asm/ptrace.h) (you can directly download it from this repo) to the your local path: ``/usr/include/x86_64-linux-gnu/asm``.
 
 ### Required packages
 
 You must install a few packages in order to build μEmu manually.
 The required packages of μEmu is same as the current S2E 2.0,
 please check out [required packages](https://github.com/S2E/s2e/blob/master/Dockerfile#L35) of S2E.
-Note please do not install S2E itself, but only install S2E dependent packages.
+
+**Note**:
+please do not install S2E itself, but only install **build**, **S2E** and **C++17** dependencies.
 
 
 ### Checking out source code
@@ -79,7 +86,7 @@ location, set the ``S2E_PREFIX`` environment variable when running ``make``.
 
 To compile μEmu in debug mode, use ``make install-debug``.
 
-Note that the Makefile automatically uses the maximum number of available processors in order to speed up compilation.
+
 
 ### Building and Preparing AFL
 
@@ -87,7 +94,6 @@ Note that the Makefile automatically uses the maximum number of available proces
 cd $uEmuDIR/AFL
 sudo make
 sudo make install
-echo core >/proc/sys/kernel/core_pattern
 ```
 
 ### Updating
@@ -142,26 +148,28 @@ After the above command successfully finishes,  you could find the `launch-uEmu.
 After finishing (typically a few minutes), you can find log files and knowledge base (KB) file (e.g., `WYCINWYC.elf-round1-state53-tbnum1069_KB.dat`) in `s2e-last` (referring to the `s2e-out-<max>`) folder. Detail logs will be printed to `s2e-last/debug.txt` and important log information will be printed to`s2e-last/warnings.txt` . More detail about log files please refer to [S2E documents](http://s2e.systems/docs/index.html) .
 
 **NOTE**:
-
-1. If you find μEmu cannot be finished KB extraction with a quiet long time (e.g., more than ten minutes), typically the reason is μEmu has been stuck. You should manually abort the execution, then check the configuration file, firmware and log files to find the reason and re-configure and re-run the firmware with μEmu. Thus,  we recommend user to enable debug level log information (add `--debug` in above command)  when he first time runs the firmware. 
+1. If you find μEmu cannot be finished KB extraction with a quiet long time (e.g., more than ten minutes), typically the reason is μEmu has been stuck. You should manually abort the execution, then check the configuration file and log files to find the failure reasons, then re-configure and re-run the firmware with μEmu. Thus, we recommend user to enable debug level log information (add `--debug` in above command)  when he first time runs the firmware.
 
 
 #### Dynamic Analysis and Fuzzing Phase:
 
 Next, you can run the firmware with learned KB for dynamic analysis.  About more detail about KB entries format please refer to [kb.md](docs/kb.md).
 
-The below command is to configure  μEmu for  running `WYCINWYC.elf` firmware in dynamic phase with `WYCINWYC.elf-round1-state53-tbnum1069_KB` KB file and fuzzing seed file `small_document.xml` .
+The below command is to configure μEmu for running `WYCINWYC.elf` firmware in dynamic phase with `WYCINWYC.elf-round1-state53-tbnum1069_KB` KB file and fuzzing seed file `small_document.xml`.
+
+
 ```console
 python3 uEmu-helper.py WYCINWYC.elf WYCNINWYC.cfg -kb WYCINWYC.elf-round1-state53-tbnum1069_KB.dat -s small_document.xml
 ```
-Since μEmu relies on AFL for fuzzing input. Thus, you first need to launch AFL fuzzur via `./launch-AFL.sh` in one terminal to input test-cases and then launch μEmu via `./launch-uEmu.sh` in another terminal to consume the test-cases. 
+
+Since μEmu relies on AFL for fuzzing input. Thus, you **first** need to launch AFL fuzzur via `./launch-AFL.sh` in **one** terminal to input test-cases and then launch μEmu via `./launch-uEmu.sh` in **another** terminal to consume the test-cases.
 The fuzzing results is stored in <proj_dir>/<firmware> folder. The log and KB files of addition round KB extraction phase are record in <s2e-last> folder.
 
 **NOTE**:
 1. Please abort fuzzing from AFL terminal, and then μEmu will automatically terminate.
 1. We recommend enable `auto_mode_switch`  in configuration file during fuzzing to automatically switch two phase , since complex firmware often use new peripherals on demand.
 2. If no seed file given, μEmu will use 4 bytes random number as initial seed to bootstrap fuzzing.
-3.  We enable fuzzing test during dynamic analysis phase by default, but user can disable it (`enable_fuzz = false`)  in configuration file. Then data registers will only used values from KB.
+3. We enable fuzzing test during dynamic analysis phase by default, but user can disable it (`enable_fuzz = false`) in configuration file. Then data registers will only used values from KB.
 4. For more advanced configurations during fuzzing phase, please refer to `Fuzzer_Config` section in [instruction](docs/config.md).
 
 ## Debugging with gdb
