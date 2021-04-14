@@ -34,10 +34,26 @@ publisher = {{USENIX} Association},
 ├── uEmu-config-template.lua # template config file of μEmu and S2E plugins
 ├── library.lua              # Contains convenience functions for the uEmu-config.lua file.
 ├── uEmu-unit_tests          # uEmu unit test samples and config files
-├── uEmu-fuzzing_tests       # uEmu fuzzing test samlpes (real-world MCU firmware) and config files
-└── ptracearm.h
+├── uEmu-fuzzing_tests       # uEmu fuzzing test samples (real-world MCU firmware) and config files
+├── ptracearm.h
+├── vagrant-bootstrap.sh     # bootstrap file for vagrant box
+└── Vagrantfile              # configuration file for vagrant box
 ```
 
+## Vagrant Installation
+
+For easy setup, a vagrant file for a virtual machine with a ready-to-use build of uEmu is provided.
+After installing vagrant, the following steps are required:
+```bash
+git clone https://github.com/MCUSec/uEmu.git
+cd uEmu
+vagrant up  # this will take a while, please be patient
+vagrant ssh # connect to the virtual machine
+```
+
+Now, from inside the virtual machine, you have the contents of this repository available at `/vagrant/`.
+
+**Note**: The VM is configured to use 4 cores and 4096 MB of RAM. You can change this by modifying the Vagrant file.
 
 ## Source Code Installation
 
