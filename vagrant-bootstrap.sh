@@ -14,7 +14,7 @@ sudo apt-get -y install libdwarf-dev libelf-dev libelf-dev:i386             \
     libboost-system-dev libboost-serialization-dev libboost-regex-dev       \
     libbsd-dev libpixman-1-dev                                              \
     libglib2.0-dev libglib2.0-dev:i386 python3-docutils libpng-dev          \
-    gcc-multilib g++-multilib
+    gcc-multilib g++-multilib gcc-9 g++-9
 
 # Additional requirement required by clang
 sudo apt-get install libtinfo5
