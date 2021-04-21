@@ -32,7 +32,7 @@ publisher = {{USENIX} Association},
 ├── launch-uEmu-template.sh  # template scripts to launch μEmu
 ├── launch-AFL-template.sh   # template scripts to launch AFL fuzzer
 ├── uEmu-config-template.lua # template config file of μEmu and S2E plugins
-├── library.lua              # Contains convenience functions for the uEmu-config.lua file.
+├── library.lua              # contains convenience functions for the uEmu-config.lua file.
 ├── uEmu-unit_tests          # uEmu unit test samples and config files
 ├── uEmu-fuzzing_tests       # uEmu fuzzing test samples (real-world MCU firmware) and config files
 ├── ptracearm.h
@@ -40,7 +40,7 @@ publisher = {{USENIX} Association},
 └── Vagrantfile              # configuration file for vagrant box
 ```
 
-## Vagrant Installation
+## Vagrant Installation (Recommended)
 
 For easy setup, a vagrant file for a virtual machine with a ready-to-use build of uEmu is provided.
 After installing vagrant, the following steps are required:
@@ -178,7 +178,7 @@ The below command is to configure μEmu for running `WYCINWYC.elf` firmware in d
 ```console
 python3 uEmu-helper.py WYCINWYC.elf WYCNINWYC.cfg -kb WYCINWYC.elf-round1-state53-tbnum1069_KB.dat -s small_document.xml
 ```
-Since μEmu relies on AFL for fuzzing input. Thus, you first need to launch AFL fuzzur via `./launch-AFL.sh` in one terminal to input test-cases and then launch μEmu via `./launch-uEmu.sh` in another terminal to consume the test-cases.
+Since μEmu relies on AFL for fuzzing input. Thus, you first need to launch AFL fuzzur via `./launch-AFL.sh` in **one terminal** to input test-cases and then launch μEmu via `./launch-uEmu.sh` in **another terminal** to consume the test-cases.
 The fuzzing results is stored in <proj_dir>/<firmware> folder. The log and KB files of addition round KB extraction phase are record in <s2e-last> folder.
 
 **NOTE**:
@@ -205,12 +205,8 @@ If you encounter any problems while using our tool, please open an issue.
 
 For other communications, you can email zhouw[at]nipc.org.cn.
 
-## TODOs
-
-### Docker installation
 
 ## Help Wanted
-
 ### DMA Support
 ### Architectures beyond ARM Cortex-M
 ### Firmware Analysis beyond Fuzzing
