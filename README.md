@@ -93,7 +93,7 @@ The μEmu Makefile can be run as follows:
 ```console
     $ sudo mkdir $uEmuDIR/build
     $ cd $uEmuDIR/build
-    $ make -f $uEmuDIR/Makefile && sudo make install
+    $ make -f $uEmuDIR/Makefile && make -f $uEmuDIR/Makefile install
     # Go make some coffee or do whatever you want, this will take some time (approx. 60 mins on a 4-core machine)
 ```
 
