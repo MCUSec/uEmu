@@ -12,7 +12,7 @@ sudo apt-get -y install libdwarf-dev libelf-dev libelf-dev:i386             \
     libboost-dev zlib1g-dev libjemalloc-dev nasm pkg-config                 \
     libmemcached-dev libpq-dev libc6-dev-i386 binutils-dev                  \
     libboost-system-dev libboost-serialization-dev libboost-regex-dev       \
-    libbsd-dev libpixman-1-dev                                              \
+    libbsd-dev libpixman-1-dev  libncurses5                                 \
     libglib2.0-dev libglib2.0-dev:i386 python3-docutils libpng-dev          \
     gcc-multilib g++-multilib gcc-9 g++-9
 
