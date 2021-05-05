@@ -1,7 +1,7 @@
 --[[
 This is a bare minimum S2E config file to demonstrate the use of libs2e with PyKVM.
 Please refer to the S2E documentation for more details.
-This file was automatically generated at 2021-04-22 11:19:01.032559
+This file was automatically generated at 2021-05-03 22:44:07.967706
 ]]--
 
 s2e = {
@@ -27,7 +27,7 @@ s2e = {
 --rom start should be equal to vtor
 mem = {
 	rom = {
-		 {0x08000000,0x40000},
+		 {0x00000000,0x40000},
 	},
 	ram = {
 		 {0x20000000,0x40000},
@@ -35,7 +35,7 @@ mem = {
 }
 
 init = {
-   vtor = 134217728,
+   vtor = 0,
 }
 
 -- Declare empty plugin settings. They will be populated in the rest of
@@ -56,7 +56,7 @@ add_plugin("BaseInstructions")
 add_plugin("Vmi")
 pluginsConfig.Vmi = {
     baseDirs = {
-        "/root/uEmu-real_firmware/fuzzingtest"
+        "/home/cap/uEmu/samples"
     }
 }
 
@@ -110,4 +110,3 @@ add_plugin("ExecutionTracer")
 add_plugin("ModuleTracer")
 
 add_plugin("StateSwitchTracer")
-
