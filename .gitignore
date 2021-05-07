@@ -1,0 +1,8 @@
+# ignore debug files
+s2e-last
+s2e-last/
+s2e-out-*/
+.gdb_history
+uEmu-config.lua
+gdb.ini
+launch-uEmu.sh
