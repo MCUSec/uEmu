@@ -1,7 +1,7 @@
 --[[
 This is a bare minimum S2E config file to demonstrate the use of libs2e with PyKVM.
 Please refer to the S2E documentation for more details.
-This file was automatically generated at 2021-05-03 22:44:07.967706
+This file was automatically generated at 2021-05-07 10:14:53.946003
 ]]--
 
 s2e = {
@@ -51,12 +51,14 @@ dofile('library.lua')
 -- Some of these include s2e_make_symbolic, s2e_kill_state, etc.
 -- You always want to have this plugin included.
 
+add_plugin("RatavaDump")
+
 add_plugin("BaseInstructions")
 
 add_plugin("Vmi")
 pluginsConfig.Vmi = {
     baseDirs = {
-        "/home/cap/uEmu/samples"
+        "/home/cap/uEmu"
     }
 }
 
