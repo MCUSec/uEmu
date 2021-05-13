@@ -15,9 +15,9 @@ s2e = {
     -- This can be left empty most of the time.
     -- Most of the options can be found in S2EExecutor.cpp and Executor.cpp.
     kleeArgs = {
-		"--verbose-on-symbolic-address=true",
-		"--verbose-state-switching=true",
-		"--verbose-fork-info=true",
+		"--verbose-on-symbolic-address={{ klee_info }}",
+		"--verbose-state-switching={{ klee_info }}",
+		"--verbose-fork-info={{ klee_info }}",
 		"--print-mode-switch=false",
 		"--fork-on-symbolic-address=false",--no self-modifying code and load libs for IoT firmware
 		"--suppress-external-warnings=true"
