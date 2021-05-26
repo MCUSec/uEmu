@@ -36,6 +36,8 @@ publisher = {{USENIX} Association},
 ├── uEmu-unit_tests          # uEmu unit test samples and config files
 ├── uEmu-fuzzing_tests       # uEmu fuzzing test samples (real-world MCU firmware) and config files
 ├── ptracearm.h
+├── totalbbrange.py          # IDA plugin for basic block range calculation
+├── cov.py         			 # script to calculate bb coverage
 ├── vagrant-bootstrap.sh     # bootstrap file for vagrant box
 └── Vagrantfile              # configuration file for vagrant box
 ```
@@ -187,6 +189,15 @@ The fuzzing results is stored in <proj_dir>/<firmware> folder. The log and KB fi
 2. If no seed file given, μEmu will use 4 bytes random number as initial seed to bootstrap fuzzing.
 3. We enable fuzzing test during dynamic analysis phase by default, but user can disable it (`enable_fuzz = false`) in configuration file. Then data registers will only used values from KB.
 4. For more advanced configurations during fuzzing phase, please refer to `Fuzzer_Config` section in [instruction](docs/config.md).
+
+### Fuzzing coverage calcuation
+The basic block coverage = number of reached basic blocks / total number of basic blocks
+We write a IDA plugin to output each basic block range in file `bb_range.txt` and total number of basic blocks.
+When user terminates the fuzzing process, μEmu will automatically terminate and record all unique reached translate block addresses in file `fuzz_tb_map.txt`.
+Finally, the cov.py calculates which which translate blocks fall into which basic block range, so as to counts unique reached basic block number and final basic block coverage. The results are generate into file `bb_covergae.txt`.
+```console
+python3 cov.py fuzz_tb_map.txt bb_range.txt
+```
 
 ## Debugging with gdb
 First, μEmu should be complied with both symbols and all debug information in order to use it with gdb:
