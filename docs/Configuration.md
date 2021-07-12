@@ -31,7 +31,7 @@ The configurations in this section is used to control how μEmu deal with interr
 
 ```
 defalut usage:
-irq_tb_break = 2000
+irq_tb_break = 1000
 disable_systick = false
 disable_irqs =
 ```
@@ -51,7 +51,7 @@ disable_irqs =
 
 ```
 defalut usage:
-bb_inv1 = 30
+bb_inv1 = 20
 bb_inv2 = 2000
 bb_terminate = 30000
 kill_points = 
@@ -75,9 +75,9 @@ alive_points =
 ```
 defalut usage:
 t2_function_parameter_num = 3
-t2_max_context = 5
 t2_caller_level = 3
-t3_max_symbolic_count = 10
+t2_max_context = 8
+t3_max_symbolic_count = 100
 ```
 
 
@@ -111,8 +111,8 @@ allow_auto_mode_switch = true
 time_out = 10
 crash_points = 
 allow_new_phs = true
-fork_point_count = 100
-additional_writable_ranges = 
+fork_point_count = 1000
+additional_writable_ranges = 0x0,0x0
 ```
 
 
