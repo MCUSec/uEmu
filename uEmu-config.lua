@@ -52,6 +52,10 @@ dofile('library.lua')
 -- You always want to have this plugin included.
 
 add_plugin("RatavaDump")
+pluginsConfig.RatavaDump = {
+    -- The address we want to track
+    instructionTraceLogAddress = "/home/cap/uEmu/test_log/",
+}
 
 add_plugin("BaseInstructions")
 
