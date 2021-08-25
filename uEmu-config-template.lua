@@ -46,49 +46,6 @@ pluginsConfig = {}
 -- Include various convenient functions
 dofile('library.lua')
 
--------------------------------------------------------------------------------
--- This plugin contains the core custom instructions.
--- Some of these include s2e_make_symbolic, s2e_kill_state, etc.
--- You always want to have this plugin included.
-
-add_plugin("BaseInstructions")
-
-add_plugin("Vmi")
-pluginsConfig.Vmi = {
-    baseDirs = {
-        "{{ pwd }}"
-    }
-}
-
-add_plugin("RawMonitor")
--- The custom instruction will notify RawMonitor of all newly loaded modules
-pluginsConfig.RawMonitor = {
-
-    kernelStart = 0x00000000,
-}
-
--------------------------------------------------------------------------------
--- Keeps for each state/process an updated map of all the loaded modules.
-add_plugin("ModuleMap")
-pluginsConfig.ModuleMap = {
-
-    logLevel="{{ loglevel }}"
-}
--------------------------------------------------------------------------------
--- Tracks execution of specific modules.
--- Analysis plugins are often interested only in small portions of the system,
--- typically the modules under analysis. This plugin filters out all core
--- events that do not concern the modules under analysis. This simplifies
--- code instrumentation.
--- Instead of listing individual modules, you can also track all modules by
--- setting configureAllModules = true
-
-add_plugin("ModuleExecutionDetector")
-pluginsConfig.ModuleExecutionDetector = {
-
-    trackExecution=true,
-    logLevel="{{ loglevel }}"
-}
 
 {% if loglevel == "debug" %}
 -------------------------------------------------------------------------------
@@ -100,16 +57,6 @@ pluginsConfig.ModuleExecutionDetector = {
 -- This is a core plugin, you most likely always want to have it.
 
 add_plugin("ExecutionTracer")
-
--------------------------------------------------------------------------------
--- This plugin records events about module loads/unloads and stores them
--- in ExecutionTracer.dat.
--- This is useful in order to map raw program counters and pids to actual
--- module names.
-
-add_plugin("ModuleTracer")
-
-add_plugin("StateSwitchTracer")
 
 {% endif %}
 
