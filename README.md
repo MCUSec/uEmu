@@ -146,8 +146,8 @@ Usage: python3 <repo_path>/uEmu-helper.py <firmware_name> <config_file_name>  [-
   * -s SEEDFILENAME,      Configure the seed filename to bootstrap fuzzing, if absent, μEmu will use random number for fuzzing.
 
 ### Preparing the user configuration file
-You can use the configuration files provided in our [unit-tests](https://github.com/MCUSec/uEmu-unit_tests) and [real-world-firwmare](https://github.com/MCUSec/uEmu-read_world_firmware) repos to our unit test samples or real-world samples in the μEmu paper.
-If you want to test your own firmware, please refer to this [instruction](docs/config.md) and our paper to edit the user configuration file. 
+You can use the configuration files provided in our [unit-tests](https://github.com/MCUSec/uEmu-unit_tests) and [real-world-firwmare](https://github.com/MCUSec/uEmu-real_world_firmware) repos to our unit test samples or real-world samples in the μEmu paper.
+If you want to test your own firmware, please refer to this [instruction](docs/Configuration.md) and our paper to edit the user configuration file. 
 
 Note that incorrect configurations will lead to unexpected  behaviors of μEmu like stall or finishing with inaccurate KB.
 
