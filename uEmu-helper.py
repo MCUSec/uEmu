@@ -14,7 +14,7 @@ DEFAULT_TEMPLATES_DIR = os.getcwd()
 def read_config(cfg_f, mode, cachefilename, firmwarename, debug):
     if not os.path.isfile(cfg_f):
         sys.exit("Cannot find the specified configuration file: %s" % cfg_f)
-    parser = configparser.SafeConfigParser()
+    parser = configparser.ConfigParser()
     parser.read(cfg_f)
 
     # Prepare the target firmware lua configuration
