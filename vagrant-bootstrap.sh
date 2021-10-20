@@ -4,6 +4,7 @@ sudo apt-get update
 #    https://github.com/S2E/s2e/blob/master/Dockerfile#L35
 sudo dpkg --add-architecture i386
 sudo apt-get update
+sudo apt-get dist-upgrade
 sudo apt-get -y install build-essential cmake wget texinfo flex bison       \
     python-dev python3-dev python3-venv python3-distro mingw-w64 lsb-release
 
