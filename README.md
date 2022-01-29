@@ -67,10 +67,7 @@ Now, from inside the virtual machine, you have the contents of this repository a
 
 You must install a few packages in order to build μEmu manually.
 The required packages of μEmu is same as the current S2E 2.0,
-please check out [required packages](https://github.com/S2E/s2e/blob/master/Dockerfile#L35) of S2E.
-
-**Note**:
-please do not install S2E itself, but only install **build**, **S2E** and **C++17** dependencies.
+You can check out all [required packages](https://github.com/MCUSec/uEmu/blob/main/vagrant-bootstrap.sh#L8) from line 8 to 21 in the Vagrant script.
 
 
 ### Checking out source code
@@ -131,20 +128,6 @@ Please make sure the `launch-uEmu-template.sh`, `launch-AFL-template.sh`, `uEmu-
 
 
 
-```bash
-Usage: python3 <repo_path>/uEmu-helper.py <firmware_name> <config_file_name>  [-h] [--debug] [-kb KBFILENAME] [-s SEEDFILENAME]
-```
-
-- positional arguments:
-  * firmware           Tested Firmware. e.g., drone.elf
-  * config                User Configuration File. e.g., firmware.cfg
-
-- optional arguments:
-  * -h, --help            Show this help message and exit
-  * --debug               Run μEmu in debug mode. Note that μEmu will output huge log information in a short time and slow down in debug mode, , please ensure you have enough space (e.g., more than 100M). Thus, we recommend only run μEmu with debug mode under KB extraction phase or the beginning of fuzzing phase.
-  * -kb KBFILENAME,       Configure the Knowledge Base filename used for μEmu fuzzing phase and μEmu will run under fuzzing phase. If KB file is not present, μEmu will run KB extraction phase by default.
-  * -s SEEDFILENAME,      Configure the seed filename to bootstrap fuzzing, if absent, μEmu will use random number for fuzzing.
-
 ### Preparing the user configuration file
 You can use the configuration files provided in our [unit-tests](https://github.com/MCUSec/uEmu-unit_tests) and [real-world-firwmare](https://github.com/MCUSec/uEmu-real_world_firmware) repos to our unit test samples or real-world samples in the μEmu paper.
 If you want to test your own firmware, please refer to this [instruction](docs/Configuration.md) and our paper to edit the user configuration file. 
@@ -152,15 +135,29 @@ If you want to test your own firmware, please refer to this [instruction](docs/C
 Note that incorrect configurations will lead to unexpected  behaviors of μEmu like stall or finishing with inaccurate KB.
 
 
-### Example of μEmu workflow
+### μEmu workflow
 Here, we take `WYCNINWYC.elf` firmware as a example to show how to run the μEmu with `uEmu-helper.py` and some attention points in each phase.
 
 #### KB Extraction Phase:
+
+
+
+```bash
+Usage: python3 <repo_path>/uEmu-helper.py <firmware_name> <config_file_name>  [-h] [--debug]
+```
+
+- arguments:
+  * firmware           Tested Firmware. e.g., drone.elf
+  * config             User Configuration File. e.g., firmware.cfg
+  * -h, --help (optional)            Show this help message and exit
+  * --debug (optional)              Run μEmu in debug mode. Note that μEmu will output huge log information in a short time and slow down in debug mode, please ensure you have enough space (e.g., more than 100M). Thus, we recommend only run μEmu with debug mode under KB extraction phase.
+
+**Example**:
 ```console
 python3 <repo_path>/uEmu-helper.py <proj_dir>/WYCINWYC.elf <proj_dir>/WYCNINWYC.cfg
 ```
 
-After the above command successfully finishes,  you could find the `launch-uEmu.sh` and `uEmu-config.lua` in your <proj_dir>. Then, you can launch the first-round KB extraction via carry out the `launch-uEmu.sh` script and you can check `uEmu-config.lua` to know whether you configurations are actually as your excepted . 
+After the above command successfully finishes,  you could find the `launch-uEmu.sh` and `uEmu-config.lua` in your <proj_dir>. Then, you can launch the first-round KB extraction via **carrying out the `launch-uEmu.sh` script** and you can verify `uEmu-config.lua` to know whether you configurations are actually as your excepted . 
 
 After finishing (typically a few minutes), you can find log files and knowledge base (KB) file named as `firmwarename-roundnumber-finalstatenumber-unqiuebbnumber_KB.dat` (e.g., `WYCINWYC.elf-round1-state53-bbnum1069_KB.dat`) in `s2e-last` (referring to the `s2e-out-<max>`) folder. Detail logs will be printed to `s2e-last/debug.txt` and important log information will be printed to`s2e-last/warnings.txt` . More detail about log files please refer to [S2E documents](http://s2e.systems/docs/index.html) .
 
@@ -172,6 +169,16 @@ After finishing (typically a few minutes), you can find log files and knowledge 
 #### Dynamic Analysis and Fuzzing Phase:
 
 Next, you can run the firmware with learned KB for dynamic analysis.  About more detail about KB entries format please refer to [kb.md](docs/KB.md).
+
+
+```bash
+Usage: python3 <repo_path>/uEmu-helper.py <firmware_name> <config_file_name>  -kb KBFILENAME [-s SEEDFILENAME]
+```
+- arguments:
+  * -kb KBFILENAME,       Configure the Knowledge Base filename used for μEmu fuzzing phase and μEmu will run under fuzzing phase. If KB file is not present, μEmu will run KB extraction phase by default.
+  * -s SEEDFILENAME(optional),      Configure the seed filename to bootstrap fuzzing, if absent, μEmu will use random number(32 bit) for fuzzing.
+
+**Example**:
 
 The below command is to configure μEmu for running `WYCINWYC.elf` firmware in dynamic phase with `WYCINWYC.elf-round1-state53-tbnum1069_KB` KB file and fuzzing seed file `small_document.xml`.
 
@@ -209,7 +216,7 @@ Please see [docs/](docs/) for more documentation.
 ## Issues
 If you encounter any problems while using our tool, please open an issue. 
 
-For other communications, you can email zhouw[at]nipc.org.cn.
+For other communications, you can email weizhou[at]hust.edu.cn.
 
 
 ## Help Wanted
