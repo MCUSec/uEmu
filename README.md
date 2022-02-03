@@ -196,7 +196,25 @@ The fuzzing results is stored in <proj_dir>/<firmware> folder. The log and KB fi
 3. We enable fuzzing test during dynamic analysis phase by default, but user can disable it (`enable_fuzz = false`) in configuration file. Then data registers will only used values from KB.
 4. For more advanced configurations during fuzzing phase, please refer to `Fuzzer_Config` section in [instruction](docs/config.md).
 
-### Fuzzing coverage calcuation
+### Testcase analysis
+If you only want to further analysis the firmware with single testcase input (e.g., crashing/hanging input), plese refer the below command to run μEmu helper script at first. Then launching μEmu via `./launch-uEmu.sh` only and **No** need to launch AFL.
+
+```bash
+Usage: python3 <repo_path>/uEmu-helper.py <firmware_name> <config_file_name>  -kb KBFILENAME -t TESTCASENAME
+```
+- arguments:
+  * -t --testcasefilename,  Configure the testcase filename used for analysis and μEmu will exit when whole testcase has been consumed. If testcase filename is not present, μEmu will run fuzzing phase by default.
+
+
+**Example**:
+
+The below command is to configure μEmu for running `WYCINWYC.elf` firmware for single testcase analysis using `WYCINWYC.elf-round1-state53-tbnum1069_KB` KB file and testcase file `testcase.txt.`.
+
+
+```console
+python3 uEmu-helper.py WYCINWYC.elf WYCNINWYC.cfg -kb WYCINWYC.elf-round1-state53-tbnum1069_KB.dat -t testcase.txt
+```
+### Coverage calcuation
 When user manully terminates the fuzzing process, μEmu will automatically terminate and record all reached QEMU translate block addresses and the execution frequency of each translation block in file `fuzz_tb_map.txt`.
 We write a IDA plugin to output each basic block range in file `bb_range.txt` and total number of basic blocks.
 Coverage in publication paper = # of visited QEMU translation blocks / total # of basic blocks.

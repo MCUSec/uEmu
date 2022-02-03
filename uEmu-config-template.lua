@@ -130,5 +130,8 @@ pluginsConfig.AFLFuzzer = {
 	hangTimeout = {{ time_out }},
 	forkCount = {{ fork_count }},
 	{% endif %}
+    {% if enable_tc == "true" %}
+	testcaseName = "{{ testcase_name }}",
+	{% endif %}
 }
 {% endif %}
