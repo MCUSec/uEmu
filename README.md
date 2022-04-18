@@ -214,9 +214,13 @@ The below command is to configure μEmu for running `WYCINWYC.elf` firmware for 
 ```console
 python3 uEmu-helper.py WYCINWYC.elf WYCNINWYC.cfg -kb WYCINWYC.elf-round1-state53-tbnum1069_KB.dat -t testcase.txt
 ```
-### Coverage calcuation
-When user manully terminates the fuzzing process, μEmu will automatically terminate and record all reached QEMU translate block addresses and the execution frequency of each translation block in file `fuzz_tb_map.txt`.
-We write a IDA plugin to output each basic block range in file `bb_range.txt` and total number of basic blocks.
+### BB Coverage calcuation
+When user manully terminates the fuzzing process, μEmu will automatically terminate and record all reached QEMU translate block start addresses and the execution frequency of each translation block in file `fuzz_tb_map.txt`.
+We provide in this repo a IDA plugin named `idapy_dump_valid_basic_block_range.py` to output each basic block range in file `valid_basic_block_range.txt` and total number of basic blocks.
+Then you can use `calculate.py` to get basic block coverage.
+```bash
+Usage: python3 calculate.py fuzz_tb_map.txt valid_basic_block_range.txt 
+```
 Coverage in publication paper = # of visited QEMU translation blocks / total # of basic blocks.
 
 ## Debugging with gdb
