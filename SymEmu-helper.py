@@ -175,7 +175,7 @@ def main(argv):
         else:
            print("uEmu will use %s file as input for dynamic analysis and will automatically exit when whole testcase has been consumed." % (args.testcasefilename));
     config = read_config(args.config, mode, args.KBfilename, args.firmware, args.debug, args.testcasefilename)
-    render_template(config, "uEmu-config-template.lua", "uEmu-config.lua")
+    render_template(config, "SymEmu-config-template.lua", "SymEmu-config.lua")
     launch = {
         'creation_time': str(datetime.datetime.now()),
         'qemu_arch':"arm",
@@ -183,7 +183,7 @@ def main(argv):
         'firmware': args.firmware,
         'root_dir': os.environ['uEmuDIR'],
     }
-    render_template(launch, "launch-uEmu-template.sh", "launch-uEmu.sh", executable=True)
+    render_template(launch, "launch-SymEmu-template.sh", "launch-SymEmu.sh", executable=True)
 
 
 if __name__ == "__main__":

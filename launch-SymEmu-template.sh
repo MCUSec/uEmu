@@ -23,7 +23,7 @@ elif [ $1 ]; then
   exit 8
 fi
 
-export S2E_CONFIG=uEmu-config.lua
+export S2E_CONFIG=SymEmu-config.lua
 export S2E_SHARED_DIR=$INSTALL_DIR
 export S2E_MAX_PROCESSES=1
 export S2E_UNBUFFERED_STREAM=1
