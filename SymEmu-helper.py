@@ -11,7 +11,7 @@ import configparser
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 DEFAULT_TEMPLATES_DIR = os.getcwd()
-def read_config(cfg_f, mode, cachefilename, firmwarename, debug, testcasename):
+def read_config(cfg_f, cpu, datasymmode, peripheralmodel, cachefilename, rulefilename, firmwarename, debug, testcasename):
     if not os.path.isfile(cfg_f):
         sys.exit("Cannot find the specified configuration file: %s" % cfg_f)
     parser = configparser.SafeConfigParser()
@@ -24,10 +24,10 @@ def read_config(cfg_f, mode, cachefilename, firmwarename, debug, testcasename):
         'firmware_name': firmwarename,
         'pwd': str(os.getcwd()),
         # Configure the uEmu is in fuzzing(true) phase or KB(false) extraction phase
-        'mode': "true" if mode else "false",
-		'klee_info': "false" if mode else "true",
-        # If using fuzzing phase, the KB file name should be configured
-        'cache_file_name': cachefilename if mode else "",
+        'peripheral_model_name': peripheralmodel,
+		'datasymmode': "true" if datasymmode else "false",
+		'klee_info': "false" if datasymmode else "true",
+		'cpu_arch': cpu
     }
 
     # MEM
@@ -49,25 +49,15 @@ def read_config(cfg_f, mode, cachefilename, firmwarename, debug, testcasename):
     config['kill_points'] = parser.get("INV_Config","kill_points").split()
     config['alive_points'] = parser.get("INV_Config","alive_points").split()
 
-    # TC
-    config['t2_function_parameter_num'] = parser.getint("TC_Config","t2_function_parameter_num")
-    config['t2_caller_level'] = parser.getint("TC_Config","t2_caller_level")
-    config['t2_max_context'] = parser.getint("TC_Config","t2_max_context")
-    config['t3_max_symbolic_count'] = parser.getint("TC_Config","t3_max_symbolic_count")
-
-    # Fuzzing target
-    if config['mode'] == "true":
-        config['enable_fuzz'] = parser.get("Fuzzer_Config","enable_fuzz")
-        config['allow_auto_mode_switch'] = parser.get("Fuzzer_Config","allow_auto_mode_switch")
-    else:
-        config['enable_fuzz'] = "false"
-    if config['enable_fuzz'] == "true":
-        config['additional_writable_ranges'] = parser.get("Fuzzer_Config","additional_writable_ranges").split( )
-        config['input_peripherals'] = parser.get("Fuzzer_Config","input_peripherals").split( )
-        config['time_out'] = parser.getint("Fuzzer_Config","time_out")
-        config['crash_points'] = parser.get("Fuzzer_Config","crash_points").split()
-        config['allow_new_phs'] = parser.get("Fuzzer_Config","allow_new_phs")
-        config['fork_count'] = parser.get("Fuzzer_Config","fork_count")
+    if peripheralmodel == "uEmu":
+        config['cache_file_name'] = cachefilename if datasymmode else ""
+        # TC
+        config['t2_function_parameter_num'] = parser.getint("TC_Config","t2_function_parameter_num")
+        config['t2_caller_level'] = parser.getint("TC_Config","t2_caller_level")
+        config['t2_max_context'] = parser.getint("TC_Config","t2_max_context")
+        config['t3_max_symbolic_count'] = parser.getint("TC_Config","t3_max_symbolic_count")
+    else: # NLP Peripheral Model
+        config['nlp_file_name'] = nlpfilename   
 
     # Testcase
     config['enable_tc'] = "true" if testcasename else "false"
@@ -118,16 +108,18 @@ def render_template(context, template, output_path, templates_dir=None,
 
 def main(argv):
     parser = argparse.ArgumentParser()
+    parser.add_argument("cpu", type=str, default="ARMv7m",
+                            help="Configure the CPU arch of target firmware. e.g., ARMv7m (default), ARMv6m")
     parser.add_argument("firmware", type=str,
-                            help="Configure the firmware name will run on uEmu")
+                            help="Configure the firmware name will run on SymEmu")
     parser.add_argument("config", type=str, default="",
-                            help="Configure the configuration file used for Knowledge Base extration. e.g., uEmu.cfg")
+                            help="Configure the configuration file used for Knowledge Base extration. e.g., SymEmu.cfg")
     parser.add_argument("--debug", action="store_true",
-                            help="In debug mode, uEmu will output huge log, please ensure you have enough space (e.g., more than 100M)")	
+                            help="In debug datasymmode, uEmu will output huge log, please ensure you have enough space (e.g., more than 100M)")	
     parser.add_argument("-kb", "--KBfilename", type=str, default="",
-                            help="Configure the Knownledge Base filename used for uEmu")
-    parser.add_argument("-s", "--seedfilename", type=str, default="",
-                            help="Configure the fuzzing seed filename used for AFL fuzzer")
+                            help="Configure the Knownledge Base filename used for uEmu peripheral model")
+    parser.add_argument("-rule", "--rulefilename", type=str, default="",
+                            help="Configure the C-A Rule filename used for SEmu peripheral model")
     parser.add_argument("-t", "--testcasefilename", type=str, default="",
                             help="Configure the testcase filename used for dynamic analysis")
 
@@ -137,51 +129,40 @@ def main(argv):
         args.config = os.path.abspath(args.config)
     else:
         sys.exit("Please set configuration .cfg file!")
-
-    if args.KBfilename == "":
-        if args.debug:
-            print("%s firmware has been configured using uEmu in knowledge extraction phase with debug level log, now you can use launch-uEmu.sh script to run it." % (args.firmware))
-        else:
-            print("%s firmware has been configured using uEmu in knowledge extraction phase with info level log, now you can use launch-uEmu.sh script to run it." % (args.firmware))
-        mode = False
+    if args.testcasefilename == "":
+        print("No testcasefile given.")
     else:
-        mode = True
-        if args.testcasefilename == "":
-            if args.seedfilename == "":
-                list_random = []
-                for num in range(0,4):
-                    randomseed = random.randint(0,127)
-                    list_random.append(randomseed)
-                with open('testcase', 'wb') as f:
-                    for r in list_random:
-                        rd = struct.pack('B', r)
-                        f.write(rd)
-                seedfilename = 'testcase'
-                print("Random initial seed %d %d %d %d will be used in dynamic analysis (fuzzing) phase." % (list_random[0], list_random[1], list_random[2], list_random[3]))
-            else:
-                seedfilename = args.seedfilename
-                print("uEmu will use manual seed file %s in dynamic analysis (fuzzing) phase." % (args.seedfilename))
-            afl = {
-                'creation_time': str(datetime.datetime.now()),
-                'firmware': args.firmware,
-                'seed': seedfilename,
-            }
-            render_template(afl, "launch-AFL-template.sh", "launch-AFL.sh", executable=True)
+        print("uEmu or SEmu will use %s file as input for dynamic analysis and will automatically exit when whole testcase has been consumed." % (args.testcasefilename));
+    if args.KBfilename == "":
+        if args.rulefilename == "":
+            peripheralmodel = "uEmu"
             if args.debug:
-                print("%s firmware has been configured using uEmu in dynamic analysis (fuzzing) phase with debug level log." % (args.firmware))
+                print("%s firmware has been configured using uEmu in knowledge extraction phase with debug level log, now you can use launch-SymEmu.sh script to run it." % (args.firmware))
             else:
-                print("%s firmware has been configured using uEmu in dynamic analysis (fuzzing) phase with info level log." % (args.firmware))
-            print("Next please first run launch-AFL.sh in one shell and use another shell to run launch-uEmu.sh.")
+                print("%s firmware has been configured using uEmu in knowledge extraction phase with info level log, now you can use launch-SymEmu.sh script to run it." % (args.firmware))
+            datasymmode = False
         else:
-           print("uEmu will use %s file as input for dynamic analysis and will automatically exit when whole testcase has been consumed." % (args.testcasefilename));
-    config = read_config(args.config, mode, args.KBfilename, args.firmware, args.debug, args.testcasefilename)
-    render_template(config, "SymEmu-config-template.lua", "SymEmu-config.lua")
+            datasymmode = True
+            peripheralmodel = "SEmu"
+            if args.debug:
+                print("%s firmware has been configured using SEmu with debug level log" % (args.firmware))
+            else:
+                print("%s firmware has been configured using SEmu with warning level log" % (args.firmware))
+    else:
+        datasymmode = True
+        peripheralmodel = "uEmu"
+        if args.debug:
+            print("%s firmware has been configured using uEmu in dynamic analysis phase with debug level log, now you can use launch-SymEmu.sh script to run it." % (args.firmware))
+        else:
+            print("%s firmware has been configured using uEmu in dynamic analysis phase with info level log, now you can use launch-SymEmu.sh script to run it." % (args.firmware))
+    config = read_config(args.config, args.cpu, datasymmode, peripheralmodel, args.KBfilename, args.rulefilename, args.firmware, args.debug, args.testcasefilename)
+    render_template(config, "SymEmu-config-template.lua", "SymEmu-config.lua")    
     launch = {
         'creation_time': str(datetime.datetime.now()),
         'qemu_arch':"arm",
         'memory':"2M",
         'firmware': args.firmware,
-        'root_dir': os.environ['uEmuDIR'],
+        'root_dir': os.environ['SymEmuDIR'],
     }
     render_template(launch, "launch-SymEmu-template.sh", "launch-SymEmu.sh", executable=True)
 

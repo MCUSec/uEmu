@@ -68,20 +68,18 @@ pluginsConfig.ARMFunctionMonitor = {
 
 add_plugin("SymbolicHardware")
 pluginsConfig.SymbolicHardware {
-	CPUArchName = "ARMv7m",
+	CPUArchName = "{{ cpu_arch }}",
 }
 
-
+{% if peripheral_model_name == "uEmu" %}
 add_plugin("PeripheralModelLearning")
 pluginsConfig.PeripheralModelLearning = {
-	useKnowledgeBase = {{ mode }},
-	useFuzzer = {{ enable_fuzz }},
+	useKnowledgeBase = {{ datasymmode }},
+	useFuzzer = {{ datasymmode }},
 	limitSymNum = {{ t3_max_symbolic_count }},
 	maxT2Size = {{ t2_max_context }},
-	{% if enable_fuzz == "true" %}allowNewPhs = {{ allow_new_phs }},
-	{% else %}allowNewPhs = true,{% endif %}
-	{% if mode == "true" %}autoModeSwitch = {{ allow_auto_mode_switch }},
-	{% else %}autoModeSwitch = false,{% endif %}
+	allowNewPhs = true,
+	autoModeSwitch = {{ datasymmode }},
 	enableExtendedInterruptMode = "true",
 	cacheFileName = "{{ cache_file_name }}",
 	firmwareName = "{{ firmware_name }}",
@@ -89,7 +87,7 @@ pluginsConfig.PeripheralModelLearning = {
 
 add_plugin("InvalidStatesDetection")
 pluginsConfig.InvalidStatesDetection = {
-	usePeripheralCache = {{ mode }},
+	usePeripheralCache = {{ datasymmode }},
 	bb_inv1 = {{ bb_inv1 }},
 	bb_inv2 = {{ bb_inv2 }},
 	bb_terminate = {{ bb_terminate }},
@@ -103,10 +101,9 @@ pluginsConfig.InvalidStatesDetection = {
         {{ a }},{% endfor %}
 	}
 }
-
 add_plugin("uEmuExternalInterrupt")
-pluginsConfig.ExternalInterrupt = {
-	BBScale= {{ bb_terminate }},
+pluginsConfig.uEmuExternalInterrupt = {
+	BBScale = {{ bb_terminate }},
 	disableSystickInterrupt = {{ disable_systick }},
 	disableIrqs = {
         {% for i in disable_irqs %}
@@ -114,5 +111,30 @@ pluginsConfig.ExternalInterrupt = {
 	},
 	tbInterval = {{ irq_tb_break }},
 	{% if disable_systick == "true" %} systickBeginPoint = {{ systick_begin_point }}, {% endif %}
+}
+{% endif %}
+
+{% if peripheral_model_name == "SEmu" %}
+add_plugin("NLPPeripheralModel")
+pluginsConfig.NLPPeripheralModel= {
+	NLPfileName = "{{ nlp_file_name }}",
+}
+
+add_plugin("ExternalInterrupt")
+pluginsConfig.ExternalInterrupt ={
+	disableSystickInterrupt = {{ disable_systick }},
+	{% if disable_systick == "true" %}systickBeginPoint = {{ systick_begin_point }},{% endif %}
+	disableIrqs = {
+        {% for i in disable_irqs %}
+        {{ i }},{% endfor %}
+	},
+}
+{% endif %}
+add_plugin("Pipe")
+pluginsConfig.Pipe = {
+	modelName = {{ peripheral_model_name }},
+	{% if enable_tc == "true" %}
+	testcaseName = "{{ testcase_name }}",
+	{% endif %}
 }
 
