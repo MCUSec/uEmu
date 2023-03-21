@@ -67,7 +67,7 @@ pluginsConfig.ARMFunctionMonitor = {
 }
 
 add_plugin("SymbolicHardware")
-pluginsConfig.SymbolicHardware {
+pluginsConfig.SymbolicHardware = {
 	CPUArchName = "{{ cpu_arch }}",
 }
 
