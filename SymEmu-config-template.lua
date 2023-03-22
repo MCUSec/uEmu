@@ -132,7 +132,7 @@ pluginsConfig.ExternalInterrupt ={
 {% endif %}
 add_plugin("Pipe")
 pluginsConfig.Pipe = {
-	modelName = {{ peripheral_model_name }},
+	modelName = "{{ peripheral_model_name }}",
 	{% if enable_tc == "true" %}
 	testcaseName = "{{ testcase_name }}",
 	{% endif %}
