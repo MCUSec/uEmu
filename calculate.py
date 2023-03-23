@@ -19,7 +19,7 @@ for bb in bbs:
     num_bbs.append([int(bb.split()[0], 16), int(bb.split()[1], 16)])
 
 for bb_m in bb_maps:
-    num_bb_maps.append([int(bb_m.split()[0], 16), int(bb_m.split()[1], 10)])
+    num_bb_maps.append([int(bb_m.split()[0], 16), int(bb_m.split()[1], 16)])
 
 ans = []
 
