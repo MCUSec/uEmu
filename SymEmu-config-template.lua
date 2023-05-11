@@ -83,6 +83,7 @@ pluginsConfig.PeripheralModelLearning = {
 	enableExtendedInterruptMode = "true",
 	cacheFileName = "{{ cache_file_name }}",
 	firmwareName = "{{ firmware_name }}",
+	ruleOutputpath = "{{ rule_outputpath }}"
 }
 
 add_plugin("InvalidStatesDetection")
