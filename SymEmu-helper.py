@@ -11,7 +11,7 @@ import configparser
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 DEFAULT_TEMPLATES_DIR = os.getcwd()
-def read_config(cfg_f, cpu, datasymmode, peripheralmodel, cachefilename, rulefilename, firmwarename, debug, testcasename):
+def read_config(cfg_f, cpu, datasymmode, peripheralmodel, cachefilename, rulefilename, firmwarename, debug, testcasename, ruleoutputpath):
     if not os.path.isfile(cfg_f):
         sys.exit("Cannot find the specified configuration file: %s" % cfg_f)
     parser = configparser.ConfigParser()
@@ -27,7 +27,8 @@ def read_config(cfg_f, cpu, datasymmode, peripheralmodel, cachefilename, rulefil
         'peripheral_model_name': peripheralmodel,
 		'datasymmode': "true" if datasymmode else "false",
 		'klee_info': "false" if datasymmode else "true",
-		'cpu_arch': cpu
+		'cpu_arch': cpu,
+        'rule_outputpath': ruleoutputpath
     }
 
     # MEM
@@ -122,6 +123,8 @@ def main(argv):
                             help="Configure the C-A Rule filename used for SEmu peripheral model")
     parser.add_argument("-t", "--testcasefilename", type=str, default="",
                             help="Configure the testcase filename used for dynamic analysis")
+    parser.add_argument("-o", "--ruleoutputpath", type=str, default="",
+                            help="Configure the rule output path used for dynamic analysis")
 
     args = parser.parse_args()
 
@@ -132,7 +135,7 @@ def main(argv):
     if args.testcasefilename == "":
         print("No testcasefile given.")
     else:
-        print("uEmu or SEmu will use %s file as input for dynamic analysis and will automatically exit when whole testcase has been consumed." % (args.testcasefilename));
+        print("uEmu or SEmu will use %s file as input for dynamic analysis and will automatically exit when whole testcase has been consumed." % (args.testcasefilename))
     if args.KBfilename == "":
         if args.rulefilename == "":
             peripheralmodel = "uEmu"
@@ -155,7 +158,11 @@ def main(argv):
             print("%s firmware has been configured using uEmu in dynamic analysis phase with debug level log, now you can use launch-SymEmu.sh script to run it." % (args.firmware))
         else:
             print("%s firmware has been configured using uEmu in dynamic analysis phase with info level log, now you can use launch-SymEmu.sh script to run it." % (args.firmware))
-    config = read_config(args.config, args.cpu, datasymmode, peripheralmodel, args.KBfilename, args.rulefilename, args.firmware, args.debug, args.testcasefilename)
+    if not os.path.exists(args.ruleoutputpath):
+        sys.exit("[-] Cannot find ruleoutputpath: '%s'!" % (args.ruleoutputpath))
+    elif args.ruleoutputpath[-1] in ['/','\\']:
+        args.ruleoutputpath = args.ruleoutputpath[:-1]
+    config = read_config(args.config, args.cpu, datasymmode, peripheralmodel, args.KBfilename, args.rulefilename, args.firmware, args.debug, args.testcasefilename, args.ruleoutputpath)
     render_template(config, "SymEmu-config-template.lua", "SymEmu-config.lua")    
     launch = {
         'creation_time': str(datetime.datetime.now()),
